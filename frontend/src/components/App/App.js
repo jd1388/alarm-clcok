@@ -8,7 +8,7 @@ import Styles from './styles';
 class App extends Component {
   constructor() {
     super();
-``
+
     this.state = {
       alarms: []
     }
