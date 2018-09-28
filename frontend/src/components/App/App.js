@@ -3,6 +3,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import AddIcon from '@material-ui/icons/Add';
+import Dialog from '@material-ui/core/Dialog';
 import Styles from './styles';
 
 class App extends Component {
@@ -10,7 +11,8 @@ class App extends Component {
     super();
 
     this.state = {
-      alarms: []
+      alarms: [],
+      isAddAlarmDialogOpen: false,
     }
   }
 
@@ -18,11 +20,19 @@ class App extends Component {
     return (
       <div style={Styles.container}>
         <Typography variant="display4">Alarm Clock</Typography>
-        <Button variant="fab" color="primary" style={Styles.fab}>
+        <Button
+          variant="fab"
+          color="primary"
+          onClick={() => this.setState({ isAddAlarmDialogOpen: true })}
+          style={Styles.fab}
+        >
           <SvgIcon>
             <AddIcon/>
           </SvgIcon>
         </Button>
+        <Dialog open={this.state.isAddAlarmDialogOpen} onClose={() => this.setState({ isAddAlarmDialogOpen: false })}>
+          This is a test
+        </Dialog>
       </div>
     );
   }

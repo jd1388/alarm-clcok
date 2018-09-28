@@ -1,16 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { shallow } from 'enzyme';
+import Chance from 'chance';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import AddIcon from '@material-ui/icons/Add';
+import Dialog from '@material-ui/core/Dialog';
 import App from './App';
 
 describe('App', () => {
   let wrapper;
+  let chance;
 
   beforeEach(() => {
+    chance = Chance();
+
     wrapper = shallow(<App />);
   });
 
@@ -59,6 +64,18 @@ describe('App', () => {
       expect(addAlarmFab.props().color).toEqual('primary');
     });
 
+    it('sets the state variable for if the add alarm dialog is open to true', () => {
+      wrapper.setState({ isAddAlarmDialogOpen: chance.bool() });
+
+      addAlarmFab = wrapper.childAt(1);
+
+      const { onClick } = addAlarmFab.props();
+
+      onClick();
+
+      expect(wrapper.state().isAddAlarmDialogOpen).toBeTruthy();
+    });
+
     describe('FAB Icon', () => {
       let fabIcon;
 
@@ -74,6 +91,42 @@ describe('App', () => {
         const addIcon = fabIcon.childAt(0);
 
         expect(addIcon.type()).toEqual(AddIcon);
+      });
+    });
+
+    describe('Add Alarm Dialog', () => {
+      let addAlarmDialog;
+
+      beforeEach(() => {
+        addAlarmDialog = wrapper.childAt(2);
+      });
+
+      it('is a Dialog component', () => {
+        expect(addAlarmDialog.type()).toEqual(Dialog);
+      });
+
+      it('has the state variable for if the dialog is open passed as the open prop', () => {
+        const isAddAlarmDialogOpen = chance.bool();
+
+        wrapper.setState({ isAddAlarmDialogOpen });
+
+        addAlarmDialog = wrapper.childAt(2);
+
+        expect(addAlarmDialog.props().open).toEqual(isAddAlarmDialogOpen);
+      });
+
+      it('sets the state variable for if the add alarm dialog is open to true when closed', () => {
+        const isAddAlarmDialogOpen = chance.bool();
+
+        wrapper.setState({ isAddAlarmDialogOpen });
+
+        addAlarmDialog = wrapper.childAt(2);
+
+        const { onClose } = addAlarmDialog.props();
+
+        onClose();
+
+        expect(wrapper.state.open).toBeFalsy();
       });
     });
   });
