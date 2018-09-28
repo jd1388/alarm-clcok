@@ -19,7 +19,7 @@ class App extends Component {
   render() {
     return (
       <div style={Styles.container}>
-        <Typography variant="display4">Alarm Clock</Typography>
+        <Typography variant="display4" color="primary">Alarm Clock</Typography>
         <Button
           variant="fab"
           color="primary"

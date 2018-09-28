@@ -38,6 +38,10 @@ describe('App', () => {
       expect(header.props().variant).toEqual('display4');
     });
 
+    it('uses the primary color', () => {
+      expect(header.props().color).toEqual('primary');
+    })
+
     it('displays the correct text', () => {
       const headerText = header.childAt(0).text();
 
