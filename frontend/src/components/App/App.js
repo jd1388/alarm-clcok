@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import AddIcon from '@material-ui/icons/Add';
 import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Styles from './styles';
 
 class App extends Component {
@@ -31,7 +32,9 @@ class App extends Component {
           </SvgIcon>
         </Button>
         <Dialog open={this.state.isAddAlarmDialogOpen} onClose={() => this.setState({ isAddAlarmDialogOpen: false })}>
-          This is a test
+          <DialogTitle>
+            Add Alarm
+          </DialogTitle>
         </Dialog>
       </div>
     );

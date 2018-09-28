@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import AddIcon from '@material-ui/icons/Add';
 import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import App from './App';
 
 describe('App', () => {
@@ -131,6 +132,24 @@ describe('App', () => {
         onClose();
 
         expect(wrapper.state.open).toBeFalsy();
+      });
+
+      describe('Dialog Title', () => {
+        let dialogTitle;
+
+        beforeEach(() => {
+          dialogTitle = addAlarmDialog.childAt(0);
+        });
+
+        it('is a DialogTitle component', () => {
+          expect(dialogTitle.type()).toEqual(DialogTitle);
+        });
+
+        it('displays the correct title text', () => {
+          const titleText = dialogTitle.childAt(0).text();
+
+          expect(titleText).toEqual('Add Alarm');
+        });
       });
     });
   });
