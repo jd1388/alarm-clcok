@@ -15,14 +15,15 @@ describe('App', () => {
   let chance;
 
   const generateFakeTime = () => {
-    const randomHour = `${chance.hour({ twentyfour: true })}`;
-    const randomMinute = `${chance.minute()}`;
-
     const convertToTwoDigitNumber = number => number.length === 1 ? `0${number}` : number;
 
+    const randomHour = convertToTwoDigitNumber(`${chance.hour({ twentyfour: true })}`);
+    const randomMinute = convertToTwoDigitNumber(`${chance.minute()}`);
+
     return {
-      randomHour: convertToTwoDigitNumber(randomHour),
-      randomMinute: convertToTwoDigitNumber(randomMinute),
+      randomHour,
+      randomMinute,
+      randomTime: `${randomHour}:${randomMinute}`,
     };
   }
 
@@ -94,8 +95,7 @@ describe('App', () => {
     });
 
     it('sets the state variable for the new alarm time to the current time', () => {
-      const { randomHour, randomMinute } = generateFakeTime();
-      const randomTime = `${randomHour}:${randomMinute}`;
+      const { randomHour, randomMinute, randomTime } = generateFakeTime();
 
       Date = class extends Date {
         getHours() {
@@ -204,8 +204,7 @@ describe('App', () => {
         });
 
         it('has a default value of the current time', () => {
-          const { randomHour, randomMinute } = generateFakeTime();
-          const randomTime = `${randomHour}:${randomMinute}`;
+          const { randomHour, randomMinute, randomTime } = generateFakeTime();
 
           Date = class extends Date {
             getHours() {
@@ -222,6 +221,21 @@ describe('App', () => {
           timeInput = addAlarmDialog.childAt(1);
 
           expect(timeInput.props().defaultValue).toEqual(randomTime);
+        });
+
+        it('updates the time stored in the app state when changed', () => {
+          const { randomTime } = generateFakeTime();
+          const fakeEvent = {
+            target: {
+              value: randomTime,
+            },
+          };
+
+          const { onChange } = timeInput.props();
+
+          onChange(fakeEvent);
+
+          expect(wrapper.state().newAlarmTime).toEqual(randomTime);
         });
       });
     });

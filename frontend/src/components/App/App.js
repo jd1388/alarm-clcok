@@ -49,7 +49,11 @@ class App extends Component {
           <DialogTitle>
             Add Alarm
           </DialogTitle>
-          <TextField type="time" defaultValue={getCurrentTime()}/>
+          <TextField
+            type="time"
+            defaultValue={getCurrentTime()}
+            onChange={event => this.setState({ newAlarmTime: event.target.value })}
+            />
         </Dialog>
       </div>
     );
