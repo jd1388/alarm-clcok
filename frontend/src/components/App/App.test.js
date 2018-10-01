@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { shallow } from 'enzyme';
 import Chance from 'chance';
 import Typography from '@material-ui/core/Typography';
@@ -8,6 +7,7 @@ import SvgIcon from '@material-ui/core/SvgIcon';
 import AddIcon from '@material-ui/icons/Add';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import TextField from '@material-ui/core/TextField';
 import App from './App';
 
 describe('App', () => {
@@ -150,6 +150,50 @@ describe('App', () => {
 
           expect(titleText).toEqual('Add Alarm');
         });
+      });
+
+      describe('Time Input', () => {
+        let timeInput;
+
+        beforeEach(() => {
+          timeInput = addAlarmDialog.childAt(1);
+        });
+
+        it('is a TextField component', () => {
+          expect(timeInput.type()).toEqual(TextField);
+        });
+
+        it('has the type prop set to time', () => {
+          expect(timeInput.props().type).toEqual('time');
+        });
+
+        it('has a default value of the current time', () => {
+          const randomHour = chance.hour({ twentyfour: true });
+          const randomMinute = chance.minute();
+          const randomTime = `${randomHour}:${randomMinute}`;
+          const randomFormattedTime = randomTime
+            .split(':')
+            .map(timeComponent => timeComponent.length === 1 ? `0${timeComponent}` : timeComponent)
+            .join(':');
+
+          Date = class extends Date {
+            getHours() {
+              return randomHour;
+            }
+
+            getMinutes() {
+              return randomMinute;
+            }
+          };
+
+          wrapper = shallow(<App/>);
+          addAlarmDialog = wrapper.childAt(2);
+          timeInput = addAlarmDialog.childAt(1);
+
+          expect(timeInput.props().defaultValue).toEqual(randomFormattedTime);
+        });
+
+        it('')
       });
     });
   });

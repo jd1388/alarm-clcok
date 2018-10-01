@@ -5,7 +5,20 @@ import SvgIcon from '@material-ui/core/SvgIcon';
 import AddIcon from '@material-ui/icons/Add';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import TextField from '@material-ui/core/TextField';
 import Styles from './styles';
+
+const getCurrentTime = () => {
+  const currentDate = new Date();
+  const currentHour = currentDate.getHours();
+  const currentMinute = currentDate.getMinutes();
+  const currentTime = `${currentHour}:${currentMinute}`;
+
+  return currentTime
+    .split(':')
+    .map(timeComponent => timeComponent.length === 1 ? `0${timeComponent}` : timeComponent)
+    .join(':');
+}
 
 class App extends Component {
   constructor() {
@@ -35,6 +48,7 @@ class App extends Component {
           <DialogTitle>
             Add Alarm
           </DialogTitle>
+          <TextField type="time" defaultValue={getCurrentTime()}/>
         </Dialog>
       </div>
     );
