@@ -27,6 +27,7 @@ class App extends Component {
     this.state = {
       alarms: [],
       isAddAlarmDialogOpen: false,
+      newAlarmTime: '',
     }
   }
 
@@ -37,7 +38,7 @@ class App extends Component {
         <Button
           variant="fab"
           color="primary"
-          onClick={() => this.setState({ isAddAlarmDialogOpen: true })}
+          onClick={() => this.setState({ isAddAlarmDialogOpen: true, newAlarmTime: getCurrentTime() })}
           style={Styles.fab}
         >
           <SvgIcon>

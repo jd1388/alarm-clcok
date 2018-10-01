@@ -14,6 +14,18 @@ describe('App', () => {
   let wrapper;
   let chance;
 
+  const generateFakeTime = () => {
+    const randomHour = `${chance.hour({ twentyfour: true })}`;
+    const randomMinute = `${chance.minute()}`;
+
+    const convertToTwoDigitNumber = number => number.length === 1 ? `0${number}` : number;
+
+    return {
+      randomHour: convertToTwoDigitNumber(randomHour),
+      randomMinute: convertToTwoDigitNumber(randomMinute),
+    };
+  }
+
   beforeEach(() => {
     chance = Chance();
 
@@ -79,6 +91,30 @@ describe('App', () => {
       onClick();
 
       expect(wrapper.state().isAddAlarmDialogOpen).toBeTruthy();
+    });
+
+    it('sets the state variable for the new alarm time to the current time', () => {
+      const { randomHour, randomMinute } = generateFakeTime();
+      const randomTime = `${randomHour}:${randomMinute}`;
+
+      Date = class extends Date {
+        getHours() {
+          return randomHour;
+        }
+
+        getMinutes() {
+          return randomMinute;
+        }
+      };
+
+      wrapper = shallow(<App/>);
+      addAlarmFab = wrapper.childAt(1);
+
+      const { onClick } = addAlarmFab.props();
+
+      onClick();
+
+      expect(wrapper.state().newAlarmTime).toEqual(randomTime);
     });
 
     describe('FAB Icon', () => {
@@ -168,13 +204,8 @@ describe('App', () => {
         });
 
         it('has a default value of the current time', () => {
-          const randomHour = chance.hour({ twentyfour: true });
-          const randomMinute = chance.minute();
+          const { randomHour, randomMinute } = generateFakeTime();
           const randomTime = `${randomHour}:${randomMinute}`;
-          const randomFormattedTime = randomTime
-            .split(':')
-            .map(timeComponent => timeComponent.length === 1 ? `0${timeComponent}` : timeComponent)
-            .join(':');
 
           Date = class extends Date {
             getHours() {
@@ -190,10 +221,8 @@ describe('App', () => {
           addAlarmDialog = wrapper.childAt(2);
           timeInput = addAlarmDialog.childAt(1);
 
-          expect(timeInput.props().defaultValue).toEqual(randomFormattedTime);
+          expect(timeInput.props().defaultValue).toEqual(randomTime);
         });
-
-        it('')
       });
     });
   });
