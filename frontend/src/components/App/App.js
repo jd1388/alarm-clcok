@@ -7,6 +7,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import Styles from './styles';
+import { DialogContent, DialogActions } from '@material-ui/core';
 
 const getCurrentTime = () => {
   const currentDate = new Date();
@@ -31,6 +32,12 @@ class App extends Component {
     }
   }
 
+  addNewAlarm() {
+    const { alarms, newAlarmTime } = this.state;
+
+    return [...alarms, newAlarmTime];
+  }
+
   render() {
     return (
       <div style={Styles.container}>
@@ -49,11 +56,21 @@ class App extends Component {
           <DialogTitle>
             Add Alarm
           </DialogTitle>
-          <TextField
-            type="time"
-            defaultValue={getCurrentTime()}
-            onChange={event => this.setState({ newAlarmTime: event.target.value })}
+          <DialogContent>
+            <TextField
+              type="time"
+              defaultValue={getCurrentTime()}
+              onChange={event => this.setState({ newAlarmTime: event.target.value })}
             />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => this.setState({ isAddAlarmDialogOpen: false })}>
+              Cancel
+            </Button>
+            <Button onClick={() => this.setState({ isAddAlarmDialogOpen: false , alarms: this.addNewAlarm() })}>
+              Add
+            </Button>
+          </DialogActions>
         </Dialog>
       </div>
     );

@@ -7,6 +7,8 @@ import SvgIcon from '@material-ui/core/SvgIcon';
 import AddIcon from '@material-ui/icons/Add';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
 import TextField from '@material-ui/core/TextField';
 import App from './App';
 
@@ -188,54 +190,159 @@ describe('App', () => {
         });
       });
 
-      describe('Time Input', () => {
-        let timeInput;
+      describe('Dialog Content', () => {
+        let dialogContent;
 
         beforeEach(() => {
-          timeInput = addAlarmDialog.childAt(1);
+          dialogContent = addAlarmDialog.childAt(1);
         });
 
-        it('is a TextField component', () => {
-          expect(timeInput.type()).toEqual(TextField);
+        it('is a DialogContent component', () => {
+          expect(dialogContent.type()).toEqual(DialogContent);
         });
 
-        it('has the type prop set to time', () => {
-          expect(timeInput.props().type).toEqual('time');
+        describe('Time Input', () => {
+          let timeInput;
+  
+          beforeEach(() => {
+            timeInput = dialogContent.childAt(0);
+          });
+  
+          it('is a TextField component', () => {
+            expect(timeInput.type()).toEqual(TextField);
+          });
+  
+          it('has the type prop set to time', () => {
+            expect(timeInput.props().type).toEqual('time');
+          });
+  
+          it('has a default value of the current time', () => {
+            const { randomHour, randomMinute, randomTime } = generateFakeTime();
+  
+            Date = class extends Date {
+              getHours() {
+                return randomHour;
+              }
+  
+              getMinutes() {
+                return randomMinute;
+              }
+            };
+  
+            wrapper = shallow(<App/>);
+            addAlarmDialog = wrapper.childAt(2);
+            dialogContent = addAlarmDialog.childAt(1);
+            timeInput = dialogContent.childAt(0);
+  
+            expect(timeInput.props().defaultValue).toEqual(randomTime);
+          });
+  
+          it('updates the time stored in the app state when changed', () => {
+            const { randomTime } = generateFakeTime();
+            const fakeEvent = {
+              target: {
+                value: randomTime,
+              },
+            };
+  
+            const { onChange } = timeInput.props();
+  
+            onChange(fakeEvent);
+  
+            expect(wrapper.state().newAlarmTime).toEqual(randomTime);
+          });
+        });
+      });
+
+      describe('Dialog Actions', () => {
+        let dialogActions;
+
+        beforeEach(() => {
+          dialogActions = addAlarmDialog.childAt(2);
         });
 
-        it('has a default value of the current time', () => {
-          const { randomHour, randomMinute, randomTime } = generateFakeTime();
-
-          Date = class extends Date {
-            getHours() {
-              return randomHour;
-            }
-
-            getMinutes() {
-              return randomMinute;
-            }
-          };
-
-          wrapper = shallow(<App/>);
-          addAlarmDialog = wrapper.childAt(2);
-          timeInput = addAlarmDialog.childAt(1);
-
-          expect(timeInput.props().defaultValue).toEqual(randomTime);
+        it('is a DialogActions component', () => {
+          expect(dialogActions.type()).toEqual(DialogActions);
         });
 
-        it('updates the time stored in the app state when changed', () => {
-          const { randomTime } = generateFakeTime();
-          const fakeEvent = {
-            target: {
-              value: randomTime,
-            },
-          };
+        describe('Cancel Button', () => {
+          let cancelButton;
+    
+          beforeEach(() => {
+            cancelButton = dialogActions.childAt(0);
+          });
+    
+          it('is a Button component', () => {
+            expect(cancelButton.type()).toEqual(Button);
+          });
+  
+          it('displays the correct text', () => {
+            const cancelButtonText = cancelButton.childAt(0).text();
+  
+            expect(cancelButtonText).toEqual('Cancel');
+          });
 
-          const { onChange } = timeInput.props();
+          it('closes the dialog when clicked', () => {
+            wrapper.setState({ isAddAlarmDialogOpen: true });
+            addAlarmDialog = wrapper.childAt(2);
+            dialogActions = addAlarmDialog.childAt(2);
+            cancelButton = dialogActions.childAt(0);
 
-          onChange(fakeEvent);
+            const { onClick } = cancelButton.props();
 
-          expect(wrapper.state().newAlarmTime).toEqual(randomTime);
+            onClick();
+
+            expect(wrapper.state.isAddAlarmDialogOpen).toBeFalsy();
+          });
+        });
+
+        describe('Add Button', () => {
+          let addButton;
+
+          beforeEach(() => {
+            addButton = dialogActions.childAt(1);
+          });
+
+          it('is a Button component', () => {
+            expect(addButton.type()).toEqual(Button);
+          });
+
+          it('displays the correct text', () => {
+            const addButtonText = addButton.childAt(0).text();
+
+            expect(addButtonText).toEqual('Add');
+          });
+
+          it('closes the dialog when clicked', () => {
+            wrapper.setState({ isAddAlarmDialogOpen: true });
+            addAlarmDialog = wrapper.childAt(2);
+            dialogActions = addAlarmDialog.childAt(2);
+            addButton = dialogActions.childAt(1);
+
+            const { onClick } = addButton.props();
+
+            onClick();
+
+            expect(wrapper.state.isAddAlarmDialogOpen).toBeFalsy();
+          });
+
+          it('adds the new alarm to the alarms in state', () => {
+            const fakeAlarms = chance.n(() => generateFakeTime().randomTime, chance.d6());
+            const fakeNewAlarm = generateFakeTime().randomTime;
+
+            wrapper.setState({ isAddAlarmDialogOpen: true, newAlarmTime: fakeNewAlarm, alarms: fakeAlarms });
+            addAlarmDialog = wrapper.childAt(2);
+            dialogActions = addAlarmDialog.childAt(2);
+            addButton = dialogActions.childAt(1);
+
+            const { onClick } = addButton.props();
+
+            onClick();
+
+            const expectedAlarms = [...fakeAlarms, fakeNewAlarm];
+
+            expect(wrapper.state().alarms).toEqual(expectedAlarms);
+          });
         });
       });
     });
