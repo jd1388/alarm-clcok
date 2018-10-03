@@ -15,7 +15,7 @@ describe('Alarm', () => {
         const convertToTwoDigitNumber = number => number.length === 1 ? `0${number}` : number;
     
         const ampmOffset = isAM ? 0 : 12;
-        const randomHour = convertToTwoDigitNumber(`${chance.hour() + ampmOffset - 1}`);
+        const randomHour = convertToTwoDigitNumber(`${chance.hour() + ampmOffset}`);
         const randomMinute = convertToTwoDigitNumber(`${chance.minute()}`);
     
         const randomTime = `${randomHour}:${randomMinute}`;
@@ -82,6 +82,34 @@ describe('Alarm', () => {
                 .join(':');
 
             expect(timeText).toEqual(`${offsetTime} PM`);
+        });
+
+        it('displays the child passed in the Alarm component correctly with hour 12 and AM', () => {
+            const minutes = `${chance.natural({ min: 0, max: 59 })}`;
+            const formattedMinutes = minutes.length === 1 ? `0${minutes}` : minutes;
+
+            const children = `00:${formattedMinutes}`;
+
+            wrapper = renderComponent({ children });
+            time = wrapper.childAt(0);
+
+            const timeText = time.childAt(0).text();
+
+            expect(timeText).toEqual(`12:${formattedMinutes} AM`);
+        });
+
+        it('displays the child passed in the Alarm component correctly with hour 12 and PM', () => {
+            const minutes = `${chance.natural({ min: 0, max: 59 })}`;
+            const formattedMinutes = minutes.length === 1 ? `0${minutes}` : minutes;
+
+            const children = `12:${formattedMinutes}`;
+
+            wrapper = renderComponent({ children });
+            time = wrapper.childAt(0);
+
+            const timeText = time.childAt(0).text();
+
+            expect(timeText).toEqual(`12:${formattedMinutes} PM`);
         });
     });
 });
