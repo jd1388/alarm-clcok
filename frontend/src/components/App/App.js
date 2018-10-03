@@ -6,8 +6,9 @@ import AddIcon from '@material-ui/icons/Add';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
-import Styles from './styles';
 import { DialogContent, DialogActions } from '@material-ui/core';
+import Styles from './styles';
+import Alarm from '../Alarm';
 
 const getCurrentTime = () => {
   const currentDate = new Date();
@@ -38,10 +39,19 @@ class App extends Component {
     return [...alarms, newAlarmTime];
   }
 
+  displayAlarms() {
+    const { alarms } = this.state;
+
+    return alarms.map(alarm => (<Alarm key={Math.random()}>{alarm}</Alarm>));
+  }
+
   render() {
     return (
       <div style={Styles.container}>
         <Typography variant="display4" color="primary">Alarm Clock</Typography>
+        <div>
+          {this.displayAlarms()}
+        </div>
         <Button
           variant="fab"
           color="primary"
