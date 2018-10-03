@@ -49,7 +49,7 @@ class App extends Component {
     return (
       <div style={Styles.container}>
         <Typography variant="display4" color="primary">Alarm Clock</Typography>
-        <div>
+        <div style={Styles.alarmContainer}>
           {this.displayAlarms()}
         </div>
         <Button

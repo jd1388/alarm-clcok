@@ -50,6 +50,18 @@ describe('Alarm', () => {
             expect(time.type()).toEqual(Typography);
         });
 
+        it('displays as the correct variant', () => {
+            expect(time.props().variant).toEqual('display3');
+        });
+
+        it('displays with the correct color', () => {
+            expect(time.props().color).toEqual('primary');
+        });
+
+        it('is center aligned', () => {
+            expect(time.props().align).toEqual('center');
+        });
+
         it('displays the child passed in to the Alarm component correctly when AM', () => {
             const children = generateFakeTime({ isAM: true });
 
